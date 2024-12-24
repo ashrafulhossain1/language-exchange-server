@@ -25,6 +25,28 @@ async function run() {
 
 
 
+        // all collections
+        const tutorialCollection = client.db('languageExchange').collection('tutorials')
+
+        // get tutors
+        app.get('/find-tutors', async (req, res) => {
+            const cursor = tutorialCollection.find()
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+
+
+        // add tutorials
+        app.post('/add-tutorials', async (req, res) => {
+            const newTutorial = req.body;
+            const result = await tutorialCollection.insertOne(newTutorial)
+            res.send(result)
+        })
+
+
+
+
     } finally {
         // Ensures that the client will close when you finish/error
         // await client.close();
