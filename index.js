@@ -28,23 +28,48 @@ async function run() {
         // all collections
         const tutorialCollection = client.db('languageExchange').collection('tutorials')
 
-        // get all tutors
-        app.get('/find-tutors', async (req, res) => {
-            const email = req.query.email;
-            console.log(email)
+
+        // TUTORS RELATED APIS  
+
+        // get all tutors 
+        // PAGE=> find-tutor
+        // PAGE=> find-tutor/:category
+
+        app.get('/tutors', async (req, res) => {
+            const category = req.query.category;
+            console.log(category)
+
             let query = {}
-            if (email) {
-                query = { tutorEmail: email }
+            if (category) {
+                query = { language: category }
             }
             const cursor = tutorialCollection.find(query)
             const result = await cursor.toArray()
             res.send(result)
         })
 
-        
 
-        // get specific one tutorial 
-        app.get('/find-tutor/:id', async (req, res) => {
+
+        // // get all tutors  
+        // app.get('/tutors', async (req, res) => {
+        //     const cursor = tutorialCollection.find()
+        //     const result = await cursor.toArray()
+        //     res.send(result)
+        // })
+
+
+        // my tutorials (private)
+        app.get('/tutors/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { tutorEmail: email }
+            const cursor = tutorialCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+
+        // get specific one tutorial (private for details page)
+        app.get('/tutor/:id', async (req, res) => {
             const id = req.params.id
             const query = { _id: new ObjectId(id) }
             const result = await tutorialCollection.findOne(query)
@@ -52,11 +77,32 @@ async function run() {
         })
 
 
-
-        // add tutorials
+        // add tutorials (private)
         app.post('/add-tutorials', async (req, res) => {
             const newTutorial = req.body;
             const result = await tutorialCollection.insertOne(newTutorial)
+            res.send(result)
+        })
+
+        app.put('/updateTutorial/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log('updating hitting', id)
+            const query = { _id: new ObjectId(id) }
+            const option = { upsert: true }
+            const updated = {
+                $set: req.body
+            }
+            const result = await tutorialCollection.updateOne(query, updated, option)
+            res.send(result)
+        })
+
+
+        // delete tutorials (private)
+        app.delete('/delete-tutor/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log(id)
+            const query = { _id: new ObjectId(id) }
+            const result = await tutorialCollection.deleteOne(query)
             res.send(result)
         })
 
