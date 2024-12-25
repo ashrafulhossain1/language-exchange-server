@@ -27,6 +27,7 @@ async function run() {
 
         // all collections
         const tutorialCollection = client.db('languageExchange').collection('tutorials')
+        const bookedCollection = client.db('languageExchange').collection('booked')
 
 
         // TUTORS RELATED APIS  
@@ -47,15 +48,6 @@ async function run() {
             const result = await cursor.toArray()
             res.send(result)
         })
-
-
-
-        // // get all tutors  
-        // app.get('/tutors', async (req, res) => {
-        //     const cursor = tutorialCollection.find()
-        //     const result = await cursor.toArray()
-        //     res.send(result)
-        // })
 
 
         // my tutorials (private)
@@ -107,7 +99,32 @@ async function run() {
         })
 
 
+        // BOOKED RELATED APIs
 
+        // insert one book post
+        app.post('/add-book', async (req, res) => {
+            const singleBook = req.body;
+            const result = await bookedCollection.insertOne(singleBook)
+            res.send(result)
+        })
+
+        app.get('/myBooked/:email', async (req, res) => {
+            const email = req.params.email
+            console.log(email)
+            const query = { userEmail: email }
+            const cursor = bookedCollection.find(query)
+            const result = await cursor.toArray()
+            res.send(result)
+        })
+
+        // my tutorials (private)
+        //   app.get('/tutors/:email', async (req, res) => {
+        //     const email = req.params.email;
+        //     const query = { tutorEmail: email }
+        //     const cursor = tutorialCollection.find(query)
+        //     const result = await cursor.toArray()
+        //     res.send(result)
+        // })
 
 
 
