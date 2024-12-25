@@ -28,6 +28,7 @@ async function run() {
         // all collections
         const tutorialCollection = client.db('languageExchange').collection('tutorials')
         const bookedCollection = client.db('languageExchange').collection('booked')
+        const usersCollection = client.db('languageExchange').collection('users')
 
 
         // TUTORS RELATED APIS  
@@ -108,12 +109,49 @@ async function run() {
             res.send(result)
         })
 
+        // app.get('/myBooked/:email', async (req, res) => {
+        //     const email = req.params.email
+        //     console.log(email)
+        //     const query = { userEmail: email }
+        //     const cursor = bookedCollection.find(query)
+        //     const result = await cursor.toArray()
+        //     res.send(result)
+        // })
+
+
         app.get('/myBooked/:email', async (req, res) => {
             const email = req.params.email
-            console.log(email)
             const query = { userEmail: email }
-            const cursor = bookedCollection.find(query)
-            const result = await cursor.toArray()
+
+            const result = await bookedCollection.find(query).toArray()
+            // aggregate data from tutorials collection 
+            for (const book of result) {
+                const filter = { _id: new ObjectId(book.tutorId) }
+                const tutorial = await tutorialCollection.findOne(filter)
+                console.log('=======================================', tutorial)
+                if (tutorial) {
+                    book.tutorName = tutorial.tutorName;
+                    book.image = tutorial.image;
+                    book.language = tutorial.language;
+                    book.tutorFee = tutorial.tutorFee;
+                    book.review = tutorial.review;
+                }
+            }
+
+            res.send(result)
+        })
+
+        // review count inc operator
+        app.patch('/review/:tutorId', async (req, res) => {
+            const tutorId = req.params.tutorId
+            console.log(tutorId)
+            const query = { _id: new ObjectId(tutorId) }
+
+            const updateReview = {
+                $inc: { review: 1 }
+            }
+            const result = await tutorialCollection.updateOne(query, updateReview)
+            console.log(result)
             res.send(result)
         })
 
