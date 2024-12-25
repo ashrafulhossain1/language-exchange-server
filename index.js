@@ -164,6 +164,59 @@ async function run() {
         //     res.send(result)
         // })
 
+        //<========================= USERS RELATED APIs ========================>
+        // ########TOTAL USERS
+        // from email password signUp page
+        app.post('/users', async (req, res) => {
+            const userInfo = req.body
+            console.log("hitting from clint", userInfo)
+
+            const result = await usersCollection.insertOne(userInfo);
+            res.send(result);
+        })
+
+
+
+        app.get('/users/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = { email };
+            const user = await usersCollection.findOne(query);
+            if (user) {
+                res.json(user);
+            } else {
+                res.json(null);
+            }
+        });
+
+        // ######## TOTAL USERS
+        app.get('/users', async (req, res) => {
+            const cursor = usersCollection.find();
+            const result = await cursor.toArray();
+            res.send({ userCount: result.length });
+        });
+
+        // ######### TOTAL TUTORS
+        app.get('/tutorCount', async (req, res) => {
+            const tutorCount = await tutorialCollection.estimatedDocumentCount();
+            res.send({ tutorCount })
+        })
+
+        // ######## review Count
+
+        app.get('/reviewsCount', async (req, res) => {
+            const result = await tutorialCollection.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        totalReviews: { $sum: "$review" }
+                    }
+                }
+            ]).toArray()
+            const reviewCount = result[0] ? result[0].totalReviews : 0;
+            res.send({ reviewCount })
+        })
+
+
 
 
 
