@@ -174,15 +174,6 @@ async function run() {
             res.send(result)
         })
 
-        // app.get('/myBooked/:email', async (req, res) => {
-        //     const email = req.params.email
-        //     console.log(email)
-        //     const query = { userEmail: email }
-        //     const cursor = bookedCollection.find(query)
-        //     const result = await cursor.toArray()
-        //     res.send(result)
-        // })
-
 
         app.get('/myBooked/:email', verifyToken, async (req, res) => {
             const email = req.params.email
@@ -226,15 +217,7 @@ async function run() {
             res.send(result)
         })
 
-        // my tutorials (private)
-        //   app.get('/tutors/:email', async (req, res) => {
-        //     const email = req.params.email;
-        //     const query = { tutorEmail: email }
-        //     const cursor = tutorialCollection.find(query)
-        //     const result = await cursor.toArray()
-        //     res.send(result)
-        // })
-
+  
         //<========================= USERS RELATED APIs ========================>
         // ########TOTAL USERS
         // from email password signUp page
