@@ -4,10 +4,10 @@ const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 const app = express()
 require('dotenv').config()
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 
 app.use(cors({
-    origin: ['http://localhost:5173',
+    origin: ['http://localhost:5174',
         'https://language--exchange-a-11.web.app',
         'https://language--exchange-a-11.firebaseapp.com'
     ],
@@ -63,17 +63,22 @@ async function run() {
         const usersCollection = client.db('languageExchange').collection('users')
 
         // ####################JWT
+
+        // verify a token symmetric
+     
+        
+
         // Auth related API -- login time (add cookie) =================================================
         app.post('/jwt', (req, res) => {
             const user = req.body;
+            // const token2 = jwt.sign({data: 'foobar'}, 'secret', { expiresIn: '1h' });
             const token = jwt.sign(user, process.env.JWT_ACCESS_SECRET, { expiresIn: '5h' })
-            res
-                .cookie('token', token, {
+
+            res.cookie('token', token, {
                     httpOnly: true,
                     secure: process.env.NODE_ENV === 'production',
-                    sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
-                })
-                .send({ success: true })
+                    // sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
+                }).send({ success: true })
         })
 
 
@@ -85,8 +90,6 @@ async function run() {
                     sameSite: process.env.NODE_ENV === "production" ? "none" : "strict",
                 })
                 .send({ success: true })
-
-
         })
 
 
@@ -217,7 +220,7 @@ async function run() {
             res.send(result)
         })
 
-  
+
         //<========================= USERS RELATED APIs ========================>
         // ########TOTAL USERS
         // from email password signUp page
