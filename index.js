@@ -135,7 +135,7 @@ async function run() {
         })
 
 
-        // add tutorials (private)
+        // add tutorials (private) route
         app.post('/add-tutorials', async (req, res) => {
             const newTutorial = req.body;
             const result = await tutorialCollection.insertOne(newTutorial)
