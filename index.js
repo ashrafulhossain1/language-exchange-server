@@ -155,7 +155,7 @@ async function run() {
         })
 
 
-        // delete tutorials (private)
+        // delete tutorials (private) route
         app.delete('/delete-tutor/:id', async (req, res) => {
             const id = req.params.id;
             // console.log(id)
